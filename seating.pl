@@ -3,6 +3,7 @@ use strict;
 
 my @presents = ();  ## 出席者
 my @numbers = ();   ## 数
+my %postions = ();  ## 出席者と数
 my $i = 1;
 
 if ( !$ARGV[0] ) {
@@ -13,20 +14,41 @@ if ( !$ARGV[0] ) {
 open(FILE, "< $ARGV[0]") or die "$!";
 
 while ( <FILE> ) {
+  chomp($_);             ## 改行の除去
+  $_ =~ s/\s//g;         ## 空白文字の除去
   if ( $_ !~ /^\#+.*/ ) {  ## コメント行を除く
-    $_ =~ s/\r//;          ## 改行の除去
-    $_ =~ s/\n//;          ## 改行の除去
     push(@presents, $_);
     push(@numbers, $i);
     $i++;
   }
 }
 
-print "name\t| number\n----------------\n";
-for ( $i = 0; $i < @presents; $i++ ) {
+close(FILE);
+
+## 出席者と数の紐付け
+foreach ( @presents ) {
   my $num = splice(@numbers, int( rand(@numbers) ), 1);  ## ランダムな数字を取得
-  print "$presents[$i]\t|   $num\n";
+  $postions{$_} = $num;
 }
 
-close(FILE);
+print "出席者一覧\n";
+for ( $i=1; $i<=@presents; $i++) {
+  print "$presents[$i-1]\t";
+  print "\n" if $i%5 == 0;
+}
+print "\n";
+
+print "What's your twitter name?: ";
+while ( <STDIN> ) {
+  chomp($_);          ## 改行の除去
+  last if $_ =~ /quit/;
+  if ( exists $postions{$_} ) {
+    print "$_\'s number is $postions{$_}\n";
+  }
+  else {
+    print "Unmatch your name.\n";
+    print "Try again.\n";
+  }
+  print "What's your twitter name?: ";
+}
 
