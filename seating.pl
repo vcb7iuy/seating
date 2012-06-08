@@ -31,17 +31,17 @@ foreach ( @presents ) {
   $postions{$_} = $num;
 }
 
-print "出席者一覧\n";
+print "The attendance\n";
 for ( $i=1; $i<=@presents; $i++) {
   print "$presents[$i-1]\t";
   print "\n" if $i%5 == 0;
 }
 print "\n";
 
-print "What's your twitter name?: ";
+print "What's your name?: ";
 while ( <STDIN> ) {
   chomp($_);          ## 改行の除去
-  last if $_ =~ /quit/;
+  last if ( $_ eq "quit" || $_ eq "q" );
   if ( exists $postions{$_} ) {
     print "$_\'s number is $postions{$_}\n";
   }
@@ -49,6 +49,6 @@ while ( <STDIN> ) {
     print "Unmatch your name.\n";
     print "Try again.\n";
   }
-  print "What's your twitter name?: ";
+  print "What's your name?: ";
 }
 
